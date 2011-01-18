@@ -45,6 +45,18 @@ class UsersController < ApplicationController
     params[:user].delete :password_confirmation if params[:user][:password_confirmation].blank?
 
     @user = User.update params[:id], params[:user]
+    
+    if params[:user][:stream_ids]
+        
+    for stream in params[:user][:stream_ids]
+        s = Stream.find(stream)
+        @user.subscribed_streams  << s
+    end
+    else 
+        @user.streams.delete_all
+        @user.subscribed_streams.delete_all
+    end
+
 
     if @user.save
       flash[:notice] = 'User has been updated'
